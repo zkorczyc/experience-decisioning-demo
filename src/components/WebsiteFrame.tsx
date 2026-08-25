@@ -11,7 +11,7 @@ import type { CSSProperties } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 
-const TLD_BY_LOCALE: Record<Locale, string> = { en: "com", pl: "pl", de: "de" };
+const TLD_BY_LOCALE: Record<Locale, string> = { en: "com", pl: "pl", de: "de", it: "it" };
 
 export default function WebsiteFrame({
   vertical,
