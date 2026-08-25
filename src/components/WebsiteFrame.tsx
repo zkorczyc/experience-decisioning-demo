@@ -3,9 +3,15 @@
 import { Text } from "@adobe/react-spectrum";
 import { DecisionResult, Persona, Vertical } from "@/lib/types";
 import { hexToRgba } from "@/lib/color";
+import { t } from "@/lib/localized";
 import { personalizedOfferTitle } from "@/lib/profileSummary";
+import { locales, localeFlags, type Locale } from "@/i18n/locales";
+import { useLocale } from "@/i18n/LocaleProvider";
 import type { CSSProperties } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
+
+const TLD_BY_LOCALE: Record<Locale, string> = { en: "com", pl: "pl", de: "de" };
 
 export default function WebsiteFrame({
   vertical,
@@ -18,18 +24,44 @@ export default function WebsiteFrame({
   paramSelections: Record<string, string>;
   result: DecisionResult;
 }) {
+  const { locale, dict } = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
   const { winner } = result;
-  const title = winner ? personalizedOfferTitle(winner.offer.name, persona, paramSelections) : null;
+  const offerName = winner ? t(winner.offer.name, locale) : null;
+  const title = winner && offerName ? personalizedOfferTitle(offerName, persona, paramSelections) : null;
+
+  function switchLocale(nextLocale: Locale) {
+    const segments = pathname.split("/");
+    segments[1] = nextLocale;
+    router.push(segments.join("/") || "/");
+  }
 
   return (
     <div style={{ flex: 1, minWidth: 320 }}>
-      <Text UNSAFE_style={labelStyle}>Website</Text>
+      <Text UNSAFE_style={labelStyle}>{dict.common.website}</Text>
       <div style={browserChromeStyle}>
         <div style={browserTopBarStyle}>
           <span style={dotStyle("#ff5f57")} />
           <span style={dotStyle("#febc2e")} />
           <span style={dotStyle("#28c840")} />
-          <div style={addressBarStyle}>{vertical.brand.toLowerCase().replace(/\s+/g, "")}.com</div>
+          <div style={addressBarStyle}>
+            {vertical.brand.toLowerCase().replace(/\s+/g, "")}.{TLD_BY_LOCALE[locale]}
+          </div>
+          <div style={langSwitcherStyle}>
+            {locales.map((code) => (
+              <button
+                key={code}
+                type="button"
+                onClick={() => switchLocale(code)}
+                aria-label={`Switch to ${code.toUpperCase()}`}
+                aria-pressed={code === locale}
+                style={flagButtonStyle(code === locale)}
+              >
+                {localeFlags[code]}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div style={siteNavStyle}>
@@ -58,12 +90,14 @@ export default function WebsiteFrame({
               <>
                 <div style={{ fontSize: 22, fontWeight: 700, color: "white", marginBottom: 8 }}>{title}</div>
                 <div style={{ fontSize: 14, color: "rgba(255,255,255,0.9)", marginBottom: 14, maxWidth: 380 }}>
-                  {winner.offer.description}
+                  {t(winner.offer.description, locale)}
                 </div>
-                <button style={ctaStyle(vertical.colors.accent, vertical.colors.dark)}>{winner.offer.cta}</button>
+                <button style={ctaStyle(vertical.colors.accent, vertical.colors.dark)}>
+                  {t(winner.offer.cta, locale)}
+                </button>
               </>
             ) : (
-              <div style={{ color: "white" }}>No offer eligible yet.</div>
+              <div style={{ color: "white" }}>{dict.common.noOfferEligibleYet}</div>
             )}
           </div>
         </div>
@@ -104,6 +138,31 @@ const addressBarStyle: CSSProperties = {
   fontSize: 11,
   color: "#555",
 };
+
+const langSwitcherStyle: CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 4,
+  marginLeft: 8,
+};
+
+function flagButtonStyle(active: boolean): CSSProperties {
+  return {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: 22,
+    height: 22,
+    padding: 0,
+    fontSize: 13,
+    lineHeight: 1,
+    borderRadius: 5,
+    border: active ? "1px solid rgba(0,0,0,0.35)" : "1px solid transparent",
+    backgroundColor: active ? "white" : "transparent",
+    cursor: "pointer",
+    opacity: active ? 1 : 0.55,
+  };
+}
 
 const siteNavStyle: CSSProperties = {
   padding: "10px 20px",

@@ -1,19 +1,16 @@
-export const V2_PARAM_LABEL_OVERRIDES: Record<string, string> = {
-  customer_status: "Relationship",
-};
+import type { Dictionary } from "@/i18n/dictionary";
 
-export const V2_SIGNAL_LABEL_OVERRIDES: Record<string, string> = {
-  customer_prospect: "Not yet a customer",
-};
-
-export function v2ParamLabel(paramId: string, fallback: string): string {
-  return V2_PARAM_LABEL_OVERRIDES[paramId] ?? fallback;
+export function v2ParamLabel(paramId: string, fallback: string, dict: Dictionary): string {
+  if (paramId === "customer_status") return dict.v2Overrides.relationshipLabel;
+  return fallback;
 }
 
-export function v2OptionLabel(optionId: string, fallback: string): string {
-  return V2_SIGNAL_LABEL_OVERRIDES[optionId] ?? fallback;
+export function v2OptionLabel(optionId: string, fallback: string, dict: Dictionary): string {
+  if (optionId === "customer_prospect") return dict.v2Overrides.notYetACustomer;
+  return fallback;
 }
 
-export function v2SignalLabel(signal: string, fallback: string): string {
-  return V2_SIGNAL_LABEL_OVERRIDES[signal] ?? fallback;
+export function v2SignalLabel(signal: string, fallback: string, dict: Dictionary): string {
+  if (signal === "customer_prospect") return dict.v2Overrides.notYetACustomer;
+  return fallback;
 }

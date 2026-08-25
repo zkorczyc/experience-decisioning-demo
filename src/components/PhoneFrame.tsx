@@ -2,7 +2,9 @@
 
 import { Text } from "@adobe/react-spectrum";
 import { DecisionResult, Persona, Vertical } from "@/lib/types";
+import { t } from "@/lib/localized";
 import { personalizedOfferTitle } from "@/lib/profileSummary";
+import { useLocale } from "@/i18n/LocaleProvider";
 import type { CSSProperties } from "react";
 import Image from "next/image";
 
@@ -17,14 +19,14 @@ export default function PhoneFrame({
   paramSelections: Record<string, string>;
   result: DecisionResult;
 }) {
+  const { locale, dict } = useLocale();
   const { winner } = result;
-  const title = winner
-    ? personalizedOfferTitle(winner.offer.mobileName ?? winner.offer.name, persona, paramSelections)
-    : null;
+  const mobileOfferName = winner ? t(winner.offer.mobileName ?? winner.offer.name, locale) : null;
+  const title = winner && mobileOfferName ? personalizedOfferTitle(mobileOfferName, persona, paramSelections) : null;
 
   return (
     <div>
-      <Text UNSAFE_style={labelStyle}>Mobile app</Text>
+      <Text UNSAFE_style={labelStyle}>{dict.common.mobileApp}</Text>
       <div style={phoneBezelStyle}>
         <div style={{ ...phoneScreenStyle, backgroundColor: vertical.colors.dark }}>
           <div style={statusBarStyle}>
@@ -58,20 +60,20 @@ export default function PhoneFrame({
                 )}
                 <div style={notificationTextStyle}>
                   <div style={{ fontSize: 11, color: "#8a94a3", marginBottom: 4 }}>
-                    {vertical.brand} · now
+                    {vertical.brand} · {dict.common.now}
                   </div>
                   <div style={{ fontWeight: 700, fontSize: 15, color: "#111827", marginBottom: 4 }}>{title}</div>
                   <div style={{ fontSize: 12, color: "#4b5563", lineHeight: 1.4, marginBottom: 10 }}>
-                    {winner.offer.mobileDescription ?? winner.offer.description}
+                    {t(winner.offer.mobileDescription ?? winner.offer.description, locale)}
                   </div>
                   <button style={ctaStyle(vertical.colors.accent, vertical.colors.dark)}>
-                    {winner.offer.mobileCta ?? winner.offer.cta}
+                    {t(winner.offer.mobileCta ?? winner.offer.cta, locale)}
                   </button>
                 </div>
               </>
             ) : (
               <div style={notificationTextStyle}>
-                <div style={{ fontSize: 13, color: "#4b5563" }}>No offer eligible yet.</div>
+                <div style={{ fontSize: 13, color: "#4b5563" }}>{dict.common.noOfferEligibleYet}</div>
               </div>
             )}
           </div>

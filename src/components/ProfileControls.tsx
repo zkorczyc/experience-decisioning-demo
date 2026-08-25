@@ -4,6 +4,8 @@ import { Flex, Heading, Item, Picker, Switch, Text, View, Well } from "@adobe/re
 import { Persona, Vertical } from "@/lib/types";
 import { getPersonaAvatarUrl } from "@/lib/personaAvatars";
 import { buildProfileSentence } from "@/lib/profileSummary";
+import { t } from "@/lib/localized";
+import { useLocale } from "@/i18n/LocaleProvider";
 import { Key } from "react";
 
 export default function ProfileControls({
@@ -21,7 +23,8 @@ export default function ProfileControls({
   onEventToggle: (signal: string, isOn: boolean) => void;
   onParamChange: (paramId: string, optionId: string) => void;
 }) {
-  const profileSentence = buildProfileSentence(persona, paramSelections, vertical);
+  const { locale, dict } = useLocale();
+  const profileSentence = buildProfileSentence(persona, paramSelections, vertical, locale, dict);
   const avatarUrl =
     getPersonaAvatarUrl(persona.id, paramSelections.age, paramSelections.sentiment, activeSignals.has("has_family")) ??
     `data:image/svg+xml,${encodeURIComponent(
@@ -56,25 +59,25 @@ export default function ProfileControls({
 
       <Well>
         <Heading level={4} margin={0}>
-          Step 1 — Set profile traits
+          {dict.v1.profileControls.step1Title}
         </Heading>
-        <Text>These represent things we already know about the customer.</Text>
+        <Text>{dict.v1.profileControls.step1Desc}</Text>
         <Flex direction="column" gap="size-200" marginTop="size-150">
           {persona.parameterDefs.map((param) => (
             <View key={param.id}>
               <Picker
-                label={param.label}
+                label={t(param.label, locale)}
                 selectedKey={paramSelections[param.id]}
                 onSelectionChange={(key: Key | null) => key !== null && onParamChange(param.id, String(key))}
               >
                 {param.options.map((option) => (
-                  <Item key={option.id}>{option.label}</Item>
+                  <Item key={option.id}>{t(option.label, locale)}</Item>
                 ))}
               </Picker>
               <Text
                 UNSAFE_style={{ display: "block", fontSize: "12px", color: "var(--spectrum-global-color-gray-600)", marginTop: 4 }}
               >
-                {param.description}
+                {t(param.description, locale)}
               </Text>
             </View>
           ))}
@@ -83,9 +86,9 @@ export default function ProfileControls({
 
       <Well>
         <Heading level={4} margin={0}>
-          Step 2 — Simulate profile events
+          {dict.v1.profileControls.step2Title}
         </Heading>
-        <Text>Toggle events on to see how the offer reacts in real time.</Text>
+        <Text>{dict.v1.profileControls.step2Desc}</Text>
         <Flex direction="column" gap="size-150" marginTop="size-150">
           {persona.eventDefs.map((event) => (
             <View key={event.id}>
@@ -93,12 +96,12 @@ export default function ProfileControls({
                 isSelected={activeSignals.has(event.signal)}
                 onChange={(isOn) => onEventToggle(event.signal, isOn)}
               >
-                {event.label}
+                {t(event.label, locale)}
               </Switch>
               <Text
                 UNSAFE_style={{ display: "block", fontSize: "12px", color: "var(--spectrum-global-color-gray-600)" }}
               >
-                {event.description}
+                {t(event.description, locale)}
               </Text>
             </View>
           ))}

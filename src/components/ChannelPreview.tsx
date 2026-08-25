@@ -3,6 +3,7 @@
 import { Badge, Flex, Heading, Text, View } from "@adobe/react-spectrum";
 import { DecisionResult, Persona, Vertical } from "@/lib/types";
 import { buildProfileSummary, shortCollectionLabel } from "@/lib/profileSummary";
+import { useLocale } from "@/i18n/LocaleProvider";
 import PhoneFrame from "./PhoneFrame";
 import WebsiteFrame from "./WebsiteFrame";
 
@@ -19,19 +20,22 @@ export default function ChannelPreview({
   activeSignals: Set<string>;
   result: DecisionResult;
 }) {
-  const summaryParts = buildProfileSummary(persona, paramSelections, vertical, activeSignals);
+  const { locale, dict } = useLocale();
+  const summaryParts = buildProfileSummary(persona, paramSelections, vertical, locale, dict, activeSignals);
 
   return (
     <View>
       <Flex direction="column" gap="size-100" marginBottom="size-200">
         <Text UNSAFE_style={{ textTransform: "uppercase", fontSize: "12px", letterSpacing: "0.05em" }}>
-          Currently shown to
+          {dict.v1.channelPreview.currentlyShownTo}
         </Text>
         <Heading level={3} margin={0}>
           {persona.name}
         </Heading>
         <Flex direction="row" gap="size-100" wrap>
-          <Badge variant="indigo">Exploring: {shortCollectionLabel(result.collectionName, vertical.brand)}</Badge>
+          <Badge variant="indigo">
+            {dict.v1.channelPreview.exploringPrefix}: {shortCollectionLabel(result.collectionName, vertical.brand, dict)}
+          </Badge>
           {summaryParts.map((part) => (
             <Badge key={part} variant="seafoam">
               {part}

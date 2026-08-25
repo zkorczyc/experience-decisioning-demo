@@ -2,8 +2,10 @@
 
 import { Flex, Heading, StatusLight, Text, View, Well } from "@adobe/react-spectrum";
 import { DecisionCandidate, DecisionResult } from "@/lib/types";
+import { t } from "@/lib/localized";
+import { useLocale } from "@/i18n/LocaleProvider";
 import { motion, animate } from "framer-motion";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Trend = "up" | "down" | "same";
 
@@ -22,6 +24,7 @@ function CandidateRow({
   isWinner: boolean;
   trend: Trend;
 }) {
+  const { locale, dict } = useLocale();
   const rowRef = useRef<HTMLTableRowElement>(null);
   const prevTotal = useRef(candidate.total);
 
@@ -49,12 +52,12 @@ function CandidateRow({
         <TrendArrow trend={trend} />
       </td>
       <td style={{ padding: "6px 8px", fontWeight: isWinner ? "bold" : "normal" }}>
-        {candidate.offer.name}
+        {t(candidate.offer.name, locale)}
         {isWinner ? " 🏆" : ""}
       </td>
       <td style={{ padding: "6px 8px" }}>
         <StatusLight variant={candidate.eligible ? "positive" : "neutral"}>
-          {candidate.eligible ? "Yes" : "No"}
+          {candidate.eligible ? dict.common.yes : dict.common.no}
         </StatusLight>
       </td>
       <td style={{ padding: "6px 8px" }}>{candidate.priorityScore}</td>
@@ -67,46 +70,52 @@ function CandidateRow({
 }
 
 export default function BehindTheScenesPanel({ result }: { result: DecisionResult }) {
-  const prevRankRef = useRef<Record<string, number> | null>(null);
+  const { dict } = useLocale();
+  const [prevRank, setPrevRank] = useState<Record<string, number> | null>(null);
+  const [trackedCandidates, setTrackedCandidates] = useState(result.candidates);
+  const [trends, setTrends] = useState<Record<string, Trend>>({});
 
-  const trends = useMemo(() => {
-    const prev = prevRankRef.current;
-    const next: Record<string, Trend> = {};
-    result.candidates.forEach((candidate, index) => {
-      const prevIndex = prev?.[candidate.offer.id];
-      if (prevIndex === undefined || prevIndex === index) next[candidate.offer.id] = "same";
-      else next[candidate.offer.id] = index < prevIndex ? "up" : "down";
-    });
-    return next;
-  }, [result.candidates]);
-
-  useEffect(() => {
+  if (trackedCandidates !== result.candidates) {
     const rank: Record<string, number> = {};
+    const nextTrends: Record<string, Trend> = {};
     result.candidates.forEach((candidate, index) => {
       rank[candidate.offer.id] = index;
+      const prevIndex = prevRank?.[candidate.offer.id];
+      nextTrends[candidate.offer.id] =
+        prevIndex === undefined || prevIndex === index ? "same" : index < prevIndex ? "up" : "down";
     });
-    prevRankRef.current = rank;
-  }, [result.candidates]);
+    setPrevRank(rank);
+    setTrackedCandidates(result.candidates);
+    setTrends(nextTrends);
+  }
 
   return (
     <Well marginTop="size-200">
       <Flex direction="column" gap="size-150">
         <Heading level={4} margin={0}>
-          Behind the scenes
+          {dict.common.behindTheScenesHeading}
         </Heading>
         <Text>
-          Collection used: <strong>{result.collectionName}</strong>
+          {dict.v1.behindTheScenesPanel.collectionUsed} <strong>{result.collectionName}</strong>
         </Text>
         <Text UNSAFE_style={{ fontSize: "13px", color: "var(--spectrum-global-color-gray-700)" }}>
-          Score = priority + affinity bonus (+20 per matched interest) + recency bonus (+15 if this
-          offer was just unlocked by your last change). The highest-scoring eligible offer wins.
+          {dict.v1.behindTheScenesPanel.explanation}
         </Text>
 
         <View overflow="auto" marginTop="size-100">
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
             <thead>
               <tr>
-                {["", "Offer", "Eligible", "Priority", "Affinity", "Recency", "Total", "Why"].map((h, i) => (
+                {[
+                  "",
+                  dict.v1.behindTheScenesPanel.tableHeaders.offer,
+                  dict.v1.behindTheScenesPanel.tableHeaders.eligible,
+                  dict.v1.behindTheScenesPanel.tableHeaders.priority,
+                  dict.v1.behindTheScenesPanel.tableHeaders.affinity,
+                  dict.v1.behindTheScenesPanel.tableHeaders.recency,
+                  dict.v1.behindTheScenesPanel.tableHeaders.total,
+                  dict.v1.behindTheScenesPanel.tableHeaders.why,
+                ].map((h, i) => (
                   <th
                     key={i}
                     style={{

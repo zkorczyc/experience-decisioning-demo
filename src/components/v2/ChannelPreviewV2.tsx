@@ -7,7 +7,10 @@ import { Badge, Flex, Heading, Text, View } from "@adobe/react-spectrum";
 import { DecisionResult, Persona, Vertical } from "@/lib/types";
 import { buildProfileSummary, shortCollectionLabel } from "@/lib/profileSummary";
 import { buildSignalLabels } from "@/lib/decisioning";
+import { t } from "@/lib/localized";
 import { v2SignalLabel } from "@/lib/v2Labels";
+import { format, type Dictionary } from "@/i18n/dictionary";
+import { useLocale } from "@/i18n/LocaleProvider";
 import PhoneFrame from "../PhoneFrame";
 import WebsiteFrame from "../WebsiteFrame";
 import BehindTheScenesPanelV2 from "./BehindTheScenesPanelV2";
@@ -15,16 +18,17 @@ import BehindTheScenesPanelV2 from "./BehindTheScenesPanelV2";
 function basedOnLine(
   winner: DecisionResult["winner"],
   signalLabels: Record<string, string>,
-  lastChangedSignal: string | null
+  lastChangedSignal: string | null,
+  dict: Dictionary
 ): string {
   if (!winner) return "";
-  const affinityLabels = winner.matchedAffinityTags.map((s) => v2SignalLabel(s, signalLabels[s] ?? s));
+  const affinityLabels = winner.matchedAffinityTags.map((s) => v2SignalLabel(s, signalLabels[s] ?? s, dict));
   const recencyLabel =
     winner.recencyBonus > 0 && lastChangedSignal
-      ? v2SignalLabel(lastChangedSignal, signalLabels[lastChangedSignal] ?? lastChangedSignal)
+      ? v2SignalLabel(lastChangedSignal, signalLabels[lastChangedSignal] ?? lastChangedSignal, dict)
       : null;
   const parts = [...new Set([...affinityLabels, ...(recencyLabel ? [recencyLabel] : [])])];
-  return parts.length > 0 ? parts.join(" · ") : "general best match";
+  return parts.length > 0 ? parts.join(" · ") : dict.v2.generalBestMatch;
 }
 
 type PrevWinner = { personaKey: string; offerId: string | null; offerName: string | null };
@@ -35,12 +39,14 @@ function DecisionHeadline({
   winnerOfferId,
   winnerOfferName,
   basedOn,
+  dict,
 }: {
   firstName: string;
   personaKey: string;
   winnerOfferId: string | null;
   winnerOfferName: string | null;
   basedOn: string;
+  dict: Dictionary;
 }) {
   const [banner, setBanner] = useState<{ from: string; to: string } | null>(null);
   const prevRef = useRef<PrevWinner | null>(null);
@@ -77,10 +83,10 @@ function DecisionHeadline({
           color: "var(--spectrum-global-color-gray-600)",
         }}
       >
-        Adobe selected for {firstName}
+        {format(dict.v2.selectedForPrefix, { firstName })}
       </Text>
       <Heading level={2} margin={0}>
-        {winnerOfferName ? `${winnerOfferName} 🏆` : "No offer eligible"}
+        {winnerOfferName ? `${winnerOfferName} 🏆` : dict.v2.noOfferEligible}
       </Heading>
       <AnimatePresence>
         {banner && (
@@ -94,13 +100,13 @@ function DecisionHeadline({
             role="status"
             aria-live="polite"
           >
-            Decision updated: {banner.from} → {banner.to}
+            {format(dict.v2.decisionUpdatedPrefix, { from: banner.from, to: banner.to })}
           </motion.div>
         )}
       </AnimatePresence>
       {winnerOfferName && (
         <Text UNSAFE_style={{ fontSize: "13px", color: "var(--spectrum-global-color-gray-800)" }}>
-          Based on: {basedOn}
+          {format(dict.v2.basedOnPrefix, { basedOn })}
         </Text>
       )}
     </Flex>
@@ -177,12 +183,14 @@ export default function ChannelPreviewV2({
   behindTheScenes: boolean;
   onToggleBehindTheScenes: () => void;
 }) {
-  const summaryParts = buildProfileSummary(persona, paramSelections, vertical, activeSignals);
-  const signalLabels = buildSignalLabels(persona);
+  const { locale, dict } = useLocale();
+  const summaryParts = buildProfileSummary(persona, paramSelections, vertical, locale, dict, activeSignals);
+  const signalLabels = buildSignalLabels(persona, locale);
   const { winner, lastChangedSignal } = result;
   const personaKey = `${vertical.id}:${persona.id}`;
   const firstName = persona.name.split(" ")[0];
   const eventSignals = new Set(persona.eventDefs.map((e) => e.signal));
+  const winnerOfferName = winner ? t(winner.offer.name, locale) : null;
 
   return (
     <View>
@@ -191,8 +199,9 @@ export default function ChannelPreviewV2({
           firstName={firstName}
           personaKey={personaKey}
           winnerOfferId={winner?.offer.id ?? null}
-          winnerOfferName={winner?.offer.name ?? null}
-          basedOn={basedOnLine(winner, signalLabels, lastChangedSignal)}
+          winnerOfferName={winnerOfferName}
+          basedOn={basedOnLine(winner, signalLabels, lastChangedSignal, dict)}
+          dict={dict}
         />
       </View>
 
@@ -202,7 +211,9 @@ export default function ChannelPreviewV2({
         </Text>
         <Flex direction="row" gap="size-100" wrap>
           <InterestBadge
-            label={`Current interests: ${shortCollectionLabel(result.collectionName, vertical.brand)}`}
+            label={format(dict.v2.currentInterestsPrefix, {
+              label: shortCollectionLabel(result.collectionName, vertical.brand, dict),
+            })}
             lastChangedSignal={lastChangedSignal}
             eventSignals={eventSignals}
           />
@@ -215,7 +226,7 @@ export default function ChannelPreviewV2({
       </Flex>
 
       <Text UNSAFE_style={{ display: "block", fontSize: "12px", color: "var(--spectrum-global-color-gray-600)", marginBottom: 8 }}>
-        Shown across channels
+        {dict.v2.shownAcrossChannels}
       </Text>
 
       <Flex direction="row" wrap gap="size-300" alignItems="start">
@@ -234,7 +245,7 @@ export default function ChannelPreviewV2({
           style={disclosureButtonStyle}
           aria-expanded={behindTheScenes}
         >
-          Why did Adobe choose this? Behind the scenes {behindTheScenes ? "▾" : "▸"}
+          {dict.v2.behindTheScenesToggle} {behindTheScenes ? "▾" : "▸"}
         </button>
         <AnimatePresence>
           {behindTheScenes && (

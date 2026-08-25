@@ -1,45 +1,47 @@
+import type { LocalizedText } from "./localized";
+
 export type Signal = string;
 
 export type EventDef = {
   id: string;
-  label: string;
-  description: string;
+  label: LocalizedText;
+  description: LocalizedText;
   signal: Signal;
 };
 
 export type ParameterOption = {
   id: string;
-  label: string;
+  label: LocalizedText;
   signal: Signal;
 };
 
 export type ParameterDef = {
   id: string;
-  label: string;
-  description: string;
+  label: LocalizedText;
+  description: LocalizedText;
   options: ParameterOption[];
   defaultOptionId: string;
 };
 
 export type Offer = {
   id: string;
-  name: string;
-  description: string;
-  cta: string;
+  name: LocalizedText;
+  description: LocalizedText;
+  cta: LocalizedText;
   requiredSignals: Signal[];
   priority: number;
   affinityTags: Signal[];
   imageUrl?: string;
   mobileImageUrl?: string;
-  mobileName?: string;
-  mobileDescription?: string;
-  mobileCta?: string;
+  mobileName?: LocalizedText;
+  mobileDescription?: LocalizedText;
+  mobileCta?: LocalizedText;
 };
 
 export type AudienceDef = {
   id: string;
-  label: string;
-  description: string;
+  label: LocalizedText;
+  description: LocalizedText;
   signal: Signal;
 };
 

@@ -5,6 +5,7 @@ import { Flex, Heading, Item, Switch, TabList, TabPanels, Tabs, Text, View } fro
 import { verticals } from "@/lib/verticals";
 import { decide } from "@/lib/decisioning";
 import { Persona } from "@/lib/types";
+import { useLocale } from "@/i18n/LocaleProvider";
 import VerticalSwitcher from "./VerticalSwitcher";
 import PersonaSwitcher from "./PersonaSwitcher";
 import ProfileControls from "./ProfileControls";
@@ -32,6 +33,7 @@ function initialSignalsFor(persona: Persona): Set<string> {
 }
 
 export default function DecisioningDemo() {
+  const { locale, dict } = useLocale();
   const [verticalId, setVerticalId] = useState(verticals[0].id);
   const [personaId, setPersonaId] = useState(verticals[0].personas[0].id);
   const [activeSignals, setActiveSignals] = useState<Set<string>>(() =>
@@ -47,8 +49,8 @@ export default function DecisioningDemo() {
   const persona = vertical.personas.find((p) => p.id === personaId)!;
 
   const result = useMemo(
-    () => decide(persona, activeSignals, lastChangedSignal),
-    [persona, activeSignals, lastChangedSignal]
+    () => decide(persona, activeSignals, lastChangedSignal, locale, dict),
+    [persona, activeSignals, lastChangedSignal, locale, dict]
   );
 
   function resetToPersona(newVerticalId: string, newPersonaId: string) {
@@ -104,20 +106,18 @@ export default function DecisioningDemo() {
               color: "var(--spectrum-global-color-gray-600)",
             }}
           >
-            Adobe Experience Decisioning
+            {dict.common.eyebrow}
           </Text>
           <Heading level={1} margin={0}>
-            Decisioning, demystified
+            {dict.v1.heading}
           </Heading>
-          <Text>
-            Change a customer&apos;s profile and watch Adobe Journey Optimizer decide which offer to show.
-          </Text>
+          <Text>{dict.v1.subheading}</Text>
         </View>
 
         <Tabs>
           <TabList>
-            <Item key="demo">Interactive demo</Item>
-            <Item key="summary">Coverage summary</Item>
+            <Item key="demo">{dict.v1.tabs.demo}</Item>
+            <Item key="summary">{dict.v1.tabs.summary}</Item>
           </TabList>
           <TabPanels>
             <Item key="demo">
@@ -134,13 +134,13 @@ export default function DecisioningDemo() {
                           marginBottom: 4,
                         }}
                       >
-                        2. Choose your demo persona
+                        {dict.personaSwitcherLabel}
                       </Text>
                       <PersonaSwitcher personas={vertical.personas} selectedId={personaId} onChange={handlePersonaChange} />
                     </View>
                   </Flex>
                   <Switch isSelected={behindTheScenes} onChange={setBehindTheScenes}>
-                    Behind the scenes
+                    {dict.v1.behindTheScenesToggle}
                   </Switch>
                 </Flex>
 

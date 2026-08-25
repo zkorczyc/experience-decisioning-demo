@@ -1,0 +1,125 @@
+import type { Dictionary } from "../dictionary";
+
+const en: Dictionary = {
+  meta: {
+    title: "Decisioning Demo",
+    description: "See how Adobe Journey Optimizer decisioning picks the right offer.",
+  },
+  footer: {
+    credit: "Created by zkorczyc@adobe.com · Adobe 2026",
+  },
+  common: {
+    eyebrow: "Adobe Experience Decisioning",
+    yes: "Yes",
+    no: "No",
+    dash: "—",
+    noOfferEligible: "No offer eligible",
+    noOfferEligibleYet: "No offer eligible yet.",
+    website: "Website",
+    mobileApp: "Mobile app",
+    now: "now",
+    behindTheScenesHeading: "Behind the scenes",
+  },
+  scenarioSwitcherLabel: "1. Choose your demo scenario",
+  personaSwitcherLabel: "2. Choose your demo persona",
+  v1: {
+    heading: "Decisioning, demystified",
+    subheading: "Change a customer's profile and watch Adobe Journey Optimizer decide which offer to show.",
+    tabs: { demo: "Interactive demo", summary: "Coverage summary" },
+    behindTheScenesToggle: "Behind the scenes",
+    channelPreview: { currentlyShownTo: "Currently shown to", exploringPrefix: "Exploring" },
+    profileControls: {
+      step1Title: "Step 1 — Set profile traits",
+      step1Desc: "These represent things we already know about the customer.",
+      step2Title: "Step 2 — Simulate profile events",
+      step2Desc: "Toggle events on to see how the offer reacts in real time.",
+    },
+    coverageSummary: {
+      title: "Coverage summary",
+      description: "Every combination of profile traits, and which offer wins by default (no extra events toggled on).",
+      tableHeaders: { image: "Image", title: "Title", subtitle: "Subtitle", cta: "CTA" },
+    },
+    behindTheScenesPanel: {
+      collectionUsed: "Collection used:",
+      explanation:
+        "Score = priority + affinity bonus (+20 per matched interest) + recency bonus (+15 if this offer was just unlocked by your last change). The highest-scoring eligible offer wins.",
+      tableHeaders: {
+        offer: "Offer",
+        eligible: "Eligible",
+        priority: "Priority",
+        affinity: "Affinity",
+        recency: "Recency",
+        total: "Total",
+        why: "Why",
+      },
+    },
+  },
+  v2: {
+    heading: "See how Adobe chooses the next best experience",
+    subheading: "Change what we know about a customer and see how the experience adapts instantly.",
+    tabs: { demo: "Interactive demo", summary: "Explore all decisions" },
+    selectedForPrefix: "Adobe selected for {firstName}",
+    noOfferEligible: "No offer eligible",
+    decisionUpdatedPrefix: "Decision updated: {from} → {to}",
+    basedOnPrefix: "Based on: {basedOn}",
+    generalBestMatch: "general best match",
+    currentInterestsPrefix: "Current interests: {label}",
+    shownAcrossChannels: "Shown across channels",
+    behindTheScenesToggle: "Why did Adobe choose this? Behind the scenes",
+    profileControls: {
+      step1Title: "Step 1 — What do we know about {firstName}?",
+      step1Desc: "Change what {brand} knows about this customer.",
+      step2Title: "Step 2 — What just happened?",
+      step2Desc: "Trigger a recent customer action and watch the decision adapt.",
+      audiences: "Audiences",
+    },
+    coverageSummary: {
+      title: "Explore all scenarios",
+      description:
+        "Every combination of traits, and what Adobe would choose — useful for exploring the full decision logic beyond the one scenario you're actively steering above.",
+      tableHeaders: { image: "Image", title: "Title", subtitle: "Subtitle", cta: "CTA" },
+    },
+    behindTheScenesPanel: {
+      howAdobeDecides: "How Adobe decides",
+      intro: "Adobe uses {brand}'s customer context and recent behavior to determine which eligible experience is most relevant right now.",
+      step1: "1. Eligibility — which experiences can {firstName} receive?",
+      step2: "2. Priority — how important is each experience to the business?",
+      step3: "3. Ranking — adjust priority based on what's relevant to {firstName} right now.",
+      step4: "4. Final score — the highest-ranked eligible experience wins.",
+      collection: "Collection: {name}",
+      rankingStrategyNote: "Demo ranking strategy: +20 for relevant customer context · +15 for a recent behavior",
+      rankingStrategyTooltip: "Adobe supports other ranking strategies too — this is one example.",
+      recentBehavior: "Recent behavior",
+      tableHeaders: {
+        experience: "Experience",
+        eligible: "Eligible",
+        priority: "Priority",
+        ranking: "Ranking",
+        finalScore: "Final score",
+        why: "Why",
+      },
+    },
+  },
+  decisioning: {
+    notEligibleYet: "Not eligible yet — needs: {missing}.",
+    prioritySetTo: "Priority set to {priority}/100",
+    matchesInterest: "matches interest in {tags} (+{bonus})",
+    justTriggered: 'just triggered by "{label}" (+{bonus})',
+  },
+  profile: {
+    yearsOld: "{years} years old",
+    customerSuffix: "{brand} Customer",
+    prospect: "Prospect",
+    dissatisfied: "Dissatisfied",
+    satisfied: "Satisfied",
+    professionPrefix: "Profession: {label}",
+    sentimentPrefix: "Sentiment: {emoji}",
+  },
+  offersSuffixWord: "Offers",
+  v2Overrides: {
+    relationshipLabel: "Relationship",
+    notYetACustomer: "Not yet a customer",
+  },
+};
+
+export default en;

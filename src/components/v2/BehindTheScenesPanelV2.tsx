@@ -3,8 +3,11 @@
 import { Flex, Heading, StatusLight, Text, View, Well } from "@adobe/react-spectrum";
 import { DecisionCandidate, DecisionResult, Persona, Signal } from "@/lib/types";
 import { buildSignalLabels } from "@/lib/decisioning";
+import { t } from "@/lib/localized";
+import { format, type Dictionary } from "@/i18n/dictionary";
+import { useLocale } from "@/i18n/LocaleProvider";
 import { motion, animate } from "framer-motion";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type Trend = "up" | "down" | "same";
 
@@ -14,9 +17,9 @@ function TrendArrow({ trend }: { trend: Trend }) {
   return <span style={{ color: "var(--spectrum-global-color-gray-500)" }}>–</span>;
 }
 
-function rankingReasonLabel(candidate: DecisionCandidate, signalLabels: Record<Signal, string>): string {
+function rankingReasonLabel(candidate: DecisionCandidate, signalLabels: Record<Signal, string>, dict: Dictionary): string {
   const parts: string[] = [];
-  if (candidate.recencyBonus > 0) parts.push("Recent behavior");
+  if (candidate.recencyBonus > 0) parts.push(dict.v2.behindTheScenesPanel.recentBehavior);
   for (const tag of candidate.matchedAffinityTags) {
     const label = signalLabels[tag] ?? tag;
     if (!parts.includes(label)) parts.push(label);
@@ -35,6 +38,7 @@ function CandidateRow({
   trend: Trend;
   signalLabels: Record<Signal, string>;
 }) {
+  const { locale, dict } = useLocale();
   const rowRef = useRef<HTMLTableRowElement>(null);
   const prevTotal = useRef(candidate.total);
   const ranking = candidate.affinityBonus + candidate.recencyBonus;
@@ -70,12 +74,12 @@ function CandidateRow({
         <TrendArrow trend={trend} />
       </td>
       <td style={{ padding: "6px 8px", fontWeight: isWinner ? "bold" : "normal" }}>
-        {candidate.offer.name}
+        {t(candidate.offer.name, locale)}
         {isWinner ? " 🏆" : ""}
       </td>
       <td style={{ padding: "6px 8px" }}>
         <StatusLight variant={candidate.eligible ? "positive" : "neutral"}>
-          {candidate.eligible ? "Yes" : "No"}
+          {candidate.eligible ? dict.common.yes : dict.common.no}
         </StatusLight>
       </td>
       <td style={{ padding: "6px 8px" }}>{candidate.priorityScore}</td>
@@ -84,14 +88,14 @@ function CandidateRow({
           <div>
             <div>+{ranking}</div>
             <div style={{ fontSize: 11, color: "var(--spectrum-global-color-gray-600)" }}>
-              {rankingReasonLabel(candidate, signalLabels)}
+              {rankingReasonLabel(candidate, signalLabels, dict)}
             </div>
           </div>
         ) : (
-          "—"
+          dict.common.dash
         )}
       </td>
-      <td style={{ padding: "6px 8px", fontWeight: "bold" }}>{candidate.eligible ? candidate.total : "—"}</td>
+      <td style={{ padding: "6px 8px", fontWeight: "bold" }}>{candidate.eligible ? candidate.total : dict.common.dash}</td>
       <td style={{ padding: "6px 8px", color: "var(--spectrum-global-color-gray-700)" }}>{candidate.reason}</td>
     </motion.tr>
   );
@@ -106,69 +110,68 @@ export default function BehindTheScenesPanelV2({
   persona: Persona;
   brand: string;
 }) {
-  const prevRankRef = useRef<Record<string, number> | null>(null);
+  const { locale, dict } = useLocale();
   const firstName = persona.name.split(" ")[0];
-  const signalLabels = useMemo(() => buildSignalLabels(persona), [persona]);
+  const signalLabels = useMemo(() => buildSignalLabels(persona, locale), [persona, locale]);
 
-  const trends = useMemo(() => {
-    const prev = prevRankRef.current;
-    const next: Record<string, Trend> = {};
-    result.candidates.forEach((candidate, index) => {
-      const prevIndex = prev?.[candidate.offer.id];
-      if (prevIndex === undefined || prevIndex === index) next[candidate.offer.id] = "same";
-      else next[candidate.offer.id] = index < prevIndex ? "up" : "down";
-    });
-    return next;
-  }, [result.candidates]);
+  const [prevRank, setPrevRank] = useState<Record<string, number> | null>(null);
+  const [trackedCandidates, setTrackedCandidates] = useState(result.candidates);
+  const [trends, setTrends] = useState<Record<string, Trend>>({});
 
-  useEffect(() => {
+  if (trackedCandidates !== result.candidates) {
     const rank: Record<string, number> = {};
+    const nextTrends: Record<string, Trend> = {};
     result.candidates.forEach((candidate, index) => {
       rank[candidate.offer.id] = index;
+      const prevIndex = prevRank?.[candidate.offer.id];
+      nextTrends[candidate.offer.id] =
+        prevIndex === undefined || prevIndex === index ? "same" : index < prevIndex ? "up" : "down";
     });
-    prevRankRef.current = rank;
-  }, [result.candidates]);
+    setPrevRank(rank);
+    setTrackedCandidates(result.candidates);
+    setTrends(nextTrends);
+  }
+
+  const panel = dict.v2.behindTheScenesPanel;
 
   return (
     <Well marginTop="size-200">
       <Flex direction="column" gap="size-150">
         <Heading level={4} margin={0}>
-          Behind the scenes
+          {dict.common.behindTheScenesHeading}
         </Heading>
 
         <Flex direction="column" gap="size-50">
-          <Text UNSAFE_style={{ fontWeight: 600 }}>How Adobe decides</Text>
+          <Text UNSAFE_style={{ fontWeight: 600 }}>{panel.howAdobeDecides}</Text>
           <Text UNSAFE_style={{ fontSize: "13px", color: "var(--spectrum-global-color-gray-700)" }}>
-            Adobe uses {brand}&apos;s customer context and recent behavior to determine which eligible experience is
-            most relevant right now.
+            {format(panel.intro, { brand })}
           </Text>
-          <Text UNSAFE_style={{ fontSize: "13px" }}>
-            1. <strong>Eligibility</strong> — which experiences can {firstName} receive?
-          </Text>
-          <Text UNSAFE_style={{ fontSize: "13px" }}>
-            2. <strong>Priority</strong> — how important is each experience to the business?
-          </Text>
-          <Text UNSAFE_style={{ fontSize: "13px" }}>
-            3. <strong>Ranking</strong> — adjust priority based on what&apos;s relevant to {firstName} right now.
-          </Text>
-          <Text UNSAFE_style={{ fontSize: "13px" }}>
-            4. <strong>Final score</strong> — the highest-ranked eligible experience wins.
-          </Text>
+          <Text UNSAFE_style={{ fontSize: "13px" }}>{format(panel.step1, { firstName })}</Text>
+          <Text UNSAFE_style={{ fontSize: "13px" }}>{panel.step2}</Text>
+          <Text UNSAFE_style={{ fontSize: "13px" }}>{format(panel.step3, { firstName })}</Text>
+          <Text UNSAFE_style={{ fontSize: "13px" }}>{panel.step4}</Text>
         </Flex>
 
         <Text UNSAFE_style={{ fontSize: "13px", color: "var(--spectrum-global-color-gray-700)" }}>
-          Collection: <strong>{result.collectionName}</strong>
+          {format(panel.collection, { name: result.collectionName })}
         </Text>
         <Text UNSAFE_style={{ fontSize: "12px", color: "var(--spectrum-global-color-gray-600)" }}>
-          Demo ranking strategy: +20 for relevant customer context · +15 for a recent behavior{" "}
-          <span title="Adobe supports other ranking strategies too — this is one example.">ⓘ</span>
+          {panel.rankingStrategyNote} <span title={panel.rankingStrategyTooltip}>ⓘ</span>
         </Text>
 
         <View overflow="auto" marginTop="size-100">
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
             <thead>
               <tr>
-                {["", "Experience", "Eligible", "Priority", "Ranking", "Final score", "Why"].map((h, i) => (
+                {[
+                  "",
+                  panel.tableHeaders.experience,
+                  panel.tableHeaders.eligible,
+                  panel.tableHeaders.priority,
+                  panel.tableHeaders.ranking,
+                  panel.tableHeaders.finalScore,
+                  panel.tableHeaders.why,
+                ].map((h, i) => (
                   <th
                     key={i}
                     style={{
