@@ -18,16 +18,16 @@ const pl: Dictionary = {
     website: "Strona internetowa",
     mobileApp: "Aplikacja mobilna",
     now: "teraz",
-    behindTheScenesHeading: "Kulisy działania",
+    behindTheScenesHeading: "Jak to działa",
   },
-  scenarioSwitcherLabel: "1. Wybierz scenariusz demo",
-  personaSwitcherLabel: "2. Wybierz personę demo",
+  scenarioSwitcherLabel: "1. Wybierz scenariusz dema",
+  personaSwitcherLabel: "2. Wybierz bohatera dema",
   v1: {
     heading: "Decisioning bez tajemnic",
     subheading:
       "Zmień profil klienta i zobacz, jak Adobe Journey Optimizer decyduje, którą ofertę wyświetlić.",
-    tabs: { demo: "Demo interaktywne", summary: "Podsumowanie zasięgu" },
-    behindTheScenesToggle: "Kulisy działania",
+    tabs: { demo: "Demo", summary: "Podsumowanie zasięgu" },
+    behindTheScenesToggle: "Jak to działa",
     channelPreview: { currentlyShownTo: "Obecnie wyświetlane dla", exploringPrefix: "Przegląda" },
     profileControls: {
       step1Title: "Krok 1 — Ustaw cechy profilu",
@@ -59,7 +59,7 @@ const pl: Dictionary = {
   v2: {
     heading: "Zobacz, jak Adobe wybiera najlepsze kolejne doświadczenie",
     subheading: "Zmień, co wiemy o kliencie, i zobacz, jak doświadczenie natychmiast się dostosowuje.",
-    tabs: { demo: "Demo interaktywne", summary: "Przeglądaj wszystkie decyzje" },
+    tabs: { demo: "Demo", summary: "Przeglądaj wszystkie decyzje" },
     selectedForPrefix: "Adobe wybrało dla {firstName}",
     noOfferEligible: "Brak dostępnej oferty",
     decisionUpdatedPrefix: "Decyzja zaktualizowana: {from} → {to}",
@@ -67,7 +67,7 @@ const pl: Dictionary = {
     generalBestMatch: "ogólne najlepsze dopasowanie",
     currentInterestsPrefix: "Aktualne zainteresowania: {label}",
     shownAcrossChannels: "Wyświetlane na wszystkich kanałach",
-    behindTheScenesToggle: "Dlaczego Adobe to wybrało? Kulisy działania",
+    behindTheScenesToggle: "Dlaczego Adobe to wybrało? Jak to działa",
     profileControls: {
       step1Title: "Krok 1 — Co wiemy o {firstName}?",
       step1Desc: "Zmień, co {brand} wie o tym kliencie.",

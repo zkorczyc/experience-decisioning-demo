@@ -5,6 +5,7 @@ import { DecisionCandidate, DecisionResult, Persona, Signal } from "@/lib/types"
 import { buildSignalLabels } from "@/lib/decisioning";
 import { t } from "@/lib/localized";
 import { format, type Dictionary } from "@/i18n/dictionary";
+import { personaFirstNameGenitive } from "@/lib/personaNameForms";
 import { useLocale } from "@/i18n/LocaleProvider";
 import { motion, animate } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -112,6 +113,7 @@ export default function BehindTheScenesPanelV2({
 }) {
   const { locale, dict } = useLocale();
   const firstName = persona.name.split(" ")[0];
+  const step3Name = personaFirstNameGenitive(persona.id, firstName, locale);
   const signalLabels = useMemo(() => buildSignalLabels(persona, locale), [persona, locale]);
 
   const [prevRank, setPrevRank] = useState<Record<string, number> | null>(null);
@@ -148,7 +150,7 @@ export default function BehindTheScenesPanelV2({
           </Text>
           <Text UNSAFE_style={{ fontSize: "13px" }}>{format(panel.step1, { firstName })}</Text>
           <Text UNSAFE_style={{ fontSize: "13px" }}>{panel.step2}</Text>
-          <Text UNSAFE_style={{ fontSize: "13px" }}>{format(panel.step3, { firstName })}</Text>
+          <Text UNSAFE_style={{ fontSize: "13px" }}>{format(panel.step3, { firstName: step3Name })}</Text>
           <Text UNSAFE_style={{ fontSize: "13px" }}>{panel.step4}</Text>
         </Flex>
 

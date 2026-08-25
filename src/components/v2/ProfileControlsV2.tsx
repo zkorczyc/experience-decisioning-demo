@@ -6,6 +6,7 @@ import { getPersonaAvatarUrl } from "@/lib/personaAvatars";
 import { buildProfileSentence } from "@/lib/profileSummary";
 import { t } from "@/lib/localized";
 import { v2ParamLabel, v2OptionLabel } from "@/lib/v2Labels";
+import { personaFirstNameLocative } from "@/lib/personaNameForms";
 import { format } from "@/i18n/dictionary";
 import { useLocale } from "@/i18n/LocaleProvider";
 import { Key } from "react";
@@ -27,6 +28,7 @@ export default function ProfileControlsV2({
 }) {
   const { locale, dict } = useLocale();
   const firstName = persona.name.split(" ")[0];
+  const step1Name = personaFirstNameLocative(persona.id, firstName, locale);
   const profileSentence = buildProfileSentence(
     persona,
     paramSelections,
@@ -69,7 +71,7 @@ export default function ProfileControlsV2({
 
       <Well>
         <Heading level={4} margin={0}>
-          {format(dict.v2.profileControls.step1Title, { firstName })}
+          {format(dict.v2.profileControls.step1Title, { firstName: step1Name })}
         </Heading>
         <Text>{format(dict.v2.profileControls.step1Desc, { brand: vertical.brand })}</Text>
         <Flex direction="column" gap="size-200" marginTop="size-150">

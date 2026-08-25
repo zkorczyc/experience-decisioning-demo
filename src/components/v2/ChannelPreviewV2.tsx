@@ -9,6 +9,7 @@ import { buildProfileSummary, shortCollectionLabel } from "@/lib/profileSummary"
 import { buildSignalLabels } from "@/lib/decisioning";
 import { t } from "@/lib/localized";
 import { v2SignalLabel } from "@/lib/v2Labels";
+import { personaFirstNameGenitive } from "@/lib/personaNameForms";
 import { format, type Dictionary } from "@/i18n/dictionary";
 import { useLocale } from "@/i18n/LocaleProvider";
 import PhoneFrame from "../PhoneFrame";
@@ -191,12 +192,13 @@ export default function ChannelPreviewV2({
   const firstName = persona.name.split(" ")[0];
   const eventSignals = new Set(persona.eventDefs.map((e) => e.signal));
   const winnerOfferName = winner ? t(winner.offer.name, locale) : null;
+  const selectedForName = personaFirstNameGenitive(persona.id, firstName, locale);
 
   return (
     <View>
       <View marginBottom="size-200">
         <DecisionHeadline
-          firstName={firstName}
+          firstName={selectedForName}
           personaKey={personaKey}
           winnerOfferId={winner?.offer.id ?? null}
           winnerOfferName={winnerOfferName}
