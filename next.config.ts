@@ -8,6 +8,16 @@ const nextConfig: NextConfig = {
         hostname: "demo-system-next.s3.eu-north-1.amazonaws.com",
         pathname: "/assets/securfinancial/**",
       },
+      {
+        protocol: "https",
+        hostname: "demo-system-next.s3.amazonaws.com",
+        pathname: "/assets/luma/**",
+      },
+      {
+        protocol: "https",
+        hostname: "demo-system-next.s3.amazonaws.com",
+        pathname: "/assets/frescopa/**",
+      },
     ],
   },
 };

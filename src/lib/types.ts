@@ -49,6 +49,8 @@ export type Persona = {
   id: string;
   name: string;
   avatarInitials: string;
+  /** Reuse another persona's avatar photo set (e.g. the same person appearing in multiple verticals). Defaults to `id`. */
+  avatarKey?: string;
   baselineSignals: Signal[];
   eventDefs: EventDef[];
   parameterDefs: ParameterDef[];

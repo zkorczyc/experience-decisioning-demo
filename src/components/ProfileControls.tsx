@@ -26,7 +26,7 @@ export default function ProfileControls({
   const { locale, dict } = useLocale();
   const profileSentence = buildProfileSentence(persona, paramSelections, vertical, locale, dict);
   const avatarUrl =
-    getPersonaAvatarUrl(persona.id, paramSelections.age, paramSelections.sentiment, activeSignals.has("has_family")) ??
+    getPersonaAvatarUrl(persona.avatarKey ?? persona.id, paramSelections.age, paramSelections.sentiment, activeSignals.has("has_family")) ??
     `data:image/svg+xml,${encodeURIComponent(
       `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" fill="#5258e4"/><text x="32" y="40" font-size="24" fill="white" text-anchor="middle" font-family="Arial">${persona.avatarInitials}</text></svg>`
     )}`;

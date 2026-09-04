@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Flex, Heading, Item, Switch, TabList, TabPanels, Tabs, Text, View } from "@adobe/react-spectrum";
 import { verticals } from "@/lib/verticals";
 import { decide } from "@/lib/decisioning";
@@ -14,7 +15,7 @@ import BehindTheScenesPanel from "./BehindTheScenesPanel";
 import CoverageSummary from "./CoverageSummary";
 
 function findVertical(verticalId: string) {
-  return verticals.find((v) => v.id === verticalId)!;
+  return verticals.find((v) => v.id === verticalId) ?? verticals[0];
 }
 
 function defaultParamSelections(persona: Persona): Record<string, string> {
@@ -34,19 +35,32 @@ function initialSignalsFor(persona: Persona): Set<string> {
 
 export default function DecisioningDemo() {
   const { locale, dict } = useLocale();
-  const [verticalId, setVerticalId] = useState(verticals[0].id);
-  const [personaId, setPersonaId] = useState(verticals[0].personas[0].id);
-  const [activeSignals, setActiveSignals] = useState<Set<string>>(() =>
-    initialSignalsFor(verticals[0].personas[0])
-  );
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const initialVertical = findVertical(searchParams.get("vertical") ?? verticals[0].id);
+  const initialPersona =
+    initialVertical.personas.find((p) => p.id === searchParams.get("persona")) ?? initialVertical.personas[0];
+
+  const [verticalId, setVerticalId] = useState(initialVertical.id);
+  const [personaId, setPersonaId] = useState(initialPersona.id);
+  const [activeSignals, setActiveSignals] = useState<Set<string>>(() => initialSignalsFor(initialPersona));
   const [paramSelections, setParamSelections] = useState<Record<string, string>>(() =>
-    defaultParamSelections(verticals[0].personas[0])
+    defaultParamSelections(initialPersona)
   );
   const [lastChangedSignal, setLastChangedSignal] = useState<string | null>(null);
   const [behindTheScenes, setBehindTheScenes] = useState(false);
 
   const vertical = findVertical(verticalId);
   const persona = vertical.personas.find((p) => p.id === personaId)!;
+
+  function syncUrl(newVerticalId: string, newPersonaId: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("vertical", newVerticalId);
+    params.set("persona", newPersonaId);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }
 
   const result = useMemo(
     () => decide(persona, activeSignals, lastChangedSignal, locale, dict),
@@ -60,6 +74,7 @@ export default function DecisioningDemo() {
     setActiveSignals(initialSignalsFor(newPersona));
     setParamSelections(defaultParamSelections(newPersona));
     setLastChangedSignal(null);
+    syncUrl(newVerticalId, newPersonaId);
   }
 
   function handleVerticalChange(newVerticalId: string) {

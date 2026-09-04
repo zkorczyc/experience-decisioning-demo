@@ -8,6 +8,8 @@ const PERSONA_NAME_FORMS: Record<string, Partial<Record<Locale, CaseForms>>> = {
   anna: { pl: { genitive: "Anny", locative: "Annie" } },
   lukas: { pl: { genitive: "Lukasa", locative: "Lukasie" } },
   marcus: { pl: { genitive: "Marcusa", locative: "Marcusie" } },
+  anna_frescopa: { pl: { genitive: "Anny", locative: "Annie" } },
+  lukas_frescopa: { pl: { genitive: "Lukasa", locative: "Lukasie" } },
 };
 
 export function personaFirstNameGenitive(personaId: string, firstName: string, locale: Locale): string {
