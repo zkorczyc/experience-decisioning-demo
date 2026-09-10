@@ -61,6 +61,19 @@ export default function CoverageSummaryV2() {
           <View key={`${vertical.id}-${persona.id}`} marginTop="size-300">
             <Heading level={4} margin={0}>
               {persona.name} — {vertical.brand}
+              {vertical.wip && (
+                <Text
+                  UNSAFE_style={{
+                    marginLeft: 8,
+                    fontSize: "11px",
+                    fontWeight: "bold",
+                    textTransform: "uppercase",
+                    color: "var(--spectrum-global-color-notice-700)",
+                  }}
+                >
+                  {dict.common.workInProgressBadge}
+                </Text>
+              )}
             </Heading>
             <View overflow="auto" marginTop="size-100">
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>

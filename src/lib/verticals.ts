@@ -720,6 +720,7 @@ export const verticals: Vertical[] = [
     brand: "Luma",
     colors: { primary: "#4674D3", dark: "#1A1A1A", accent: "#DCE6FA" },
     personas: [marcus, annaRetail, lukasRetail],
+    wip: true,
   },
   {
     id: "frescopa",
@@ -727,6 +728,7 @@ export const verticals: Vertical[] = [
     brand: "Frescopa",
     colors: { primary: "#C1440E", dark: "#2E1A12", accent: "#F5E6D3" },
     personas: [annaFrescopa, lukasFrescopa],
+    wip: true,
   },
   {
     id: "travel",

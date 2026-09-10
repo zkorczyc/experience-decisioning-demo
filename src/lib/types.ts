@@ -71,6 +71,7 @@ export type Vertical = {
   colors: BrandColors;
   personas: Persona[];
   disabled?: boolean;
+  wip?: boolean;
 };
 
 export type DecisionCandidate = {

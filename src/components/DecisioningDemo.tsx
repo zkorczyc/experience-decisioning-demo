@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Flex, Heading, Item, Switch, TabList, TabPanels, Tabs, Text, View } from "@adobe/react-spectrum";
+import { Content, Flex, Heading, InlineAlert, Item, Switch, TabList, TabPanels, Tabs, Text, View } from "@adobe/react-spectrum";
 import { verticals } from "@/lib/verticals";
 import { decide } from "@/lib/decisioning";
 import { Persona } from "@/lib/types";
@@ -137,6 +137,12 @@ export default function DecisioningDemo() {
           <TabPanels>
             <Item key="demo">
               <Flex direction="column" gap="size-300" marginTop="size-200">
+                {vertical.wip && (
+                  <InlineAlert variant="notice">
+                    <Heading>{dict.common.workInProgressBadge}</Heading>
+                    <Content>{dict.common.workInProgressNotice}</Content>
+                  </InlineAlert>
+                )}
                 <Flex direction="row" gap="size-300" wrap alignItems="start" justifyContent="space-between">
                   <Flex direction="column" gap="size-200">
                     <VerticalSwitcher verticals={verticals} selectedId={verticalId} onChange={handleVerticalChange} />

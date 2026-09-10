@@ -12,6 +12,8 @@ export type Dictionary = {
     mobileApp: string;
     now: string;
     behindTheScenesHeading: string;
+    workInProgressBadge: string;
+    workInProgressNotice: string;
   };
   scenarioSwitcherLabel: string;
   personaSwitcherLabel: string;

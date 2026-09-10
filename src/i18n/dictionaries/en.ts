@@ -19,6 +19,8 @@ const en: Dictionary = {
     mobileApp: "Mobile app",
     now: "now",
     behindTheScenesHeading: "Behind the scenes",
+    workInProgressBadge: "Work in progress",
+    workInProgressNotice: "This vertical is a work in progress — content and flows may be incomplete or change without notice.",
   },
   scenarioSwitcherLabel: "1. Choose your demo scenario",
   personaSwitcherLabel: "2. Choose your demo persona",

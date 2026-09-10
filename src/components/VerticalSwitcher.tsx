@@ -26,7 +26,9 @@ export default function VerticalSwitcher({
       onSelectionChange={(key: Key | null) => key !== null && onChange(String(key))}
     >
       {verticals.map((vertical) => (
-        <Item key={vertical.id}>{vertical.name}</Item>
+        <Item key={vertical.id}>
+          {vertical.wip ? `${vertical.name} (${dict.common.workInProgressBadge})` : vertical.name}
+        </Item>
       ))}
     </Picker>
   );

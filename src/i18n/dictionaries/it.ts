@@ -19,6 +19,8 @@ const it: Dictionary = {
     mobileApp: "App mobile",
     now: "ora",
     behindTheScenesHeading: "Dietro le quinte",
+    workInProgressBadge: "Lavori in corso",
+    workInProgressNotice: "Questo settore è in fase di lavorazione — i contenuti e i flussi potrebbero essere incompleti o soggetti a modifiche senza preavviso.",
   },
   scenarioSwitcherLabel: "1. Scegli il tuo scenario demo",
   personaSwitcherLabel: "2. Scegli la tua persona demo",

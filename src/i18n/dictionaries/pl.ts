@@ -19,6 +19,8 @@ const pl: Dictionary = {
     mobileApp: "Aplikacja mobilna",
     now: "teraz",
     behindTheScenesHeading: "Jak to działa",
+    workInProgressBadge: "W trakcie prac",
+    workInProgressNotice: "Ta wersja branżowa jest w trakcie prac — treści i przepływy mogą być niekompletne lub ulec zmianie bez zapowiedzi.",
   },
   scenarioSwitcherLabel: "1. Wybierz scenariusz dema",
   personaSwitcherLabel: "2. Wybierz bohatera dema",
